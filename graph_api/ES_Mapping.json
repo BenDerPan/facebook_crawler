@@ -33,6 +33,7 @@
 
      "comments" :{
        "properties": {
+         "page_id" : { "type" : "string" },
          "parent" : { "type" : "posts_id" },
          "uid" : { "type" : "string" },
          "message" : { "type" : "string" },
@@ -54,7 +55,39 @@
            }
          }
        }
+     },
+
+     "events" :{
+        "properties": {
+         "page_id" : { "type" : "string" },
+         "parent" : { "type" : "string" },
+         "uid" : { "type" : "string" },
+         "description" : { "type" : "string" },
+         "start_time" : {
+              "type":   "date",
+              "format": "strict_date_optional_time||epoch_millis"
+         },
+          "end_time" : {
+              "type":   "date",
+              "format": "strict_date_optional_time||epoch_millis"
+         },
+         "attend_count" : { "type" : "long" },
+         "interested_count" : { "type" : "long" },
+          "place" : {
+            "properties":{
+              "name" :{ "type": "string"},
+              "city" : {"type" : "string"},
+              "country" : { "type" : "string" },
+              "state" : { "type" : "string" },
+              "street" : { "type" : "string"},
+              "location" : { "type" : "geo_point"}
+            }
+          },
+
+          "cover" : { "type" : "string" }
+       }
      }
+
    }
 }
 

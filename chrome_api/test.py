@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-import settings
+from graph_api import settings
 
 logger = logging.getLogger('testThread')
 

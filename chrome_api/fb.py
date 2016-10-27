@@ -5,7 +5,7 @@ from kafka import KafkaConsumer
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-import settings
+from graph_api import settings
 
 
 class CrawlerThread(threading.Thread):
@@ -48,5 +48,3 @@ class CrawlerThread(threading.Thread):
                         self.browser.find_elements_by_class_name()
                 except:
                     continue
-
-

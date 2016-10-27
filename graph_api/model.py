@@ -27,6 +27,7 @@ class wrapper():
             self.logger.warning(error)
             return False
 
+    #put posts into ES
     def fb_post_wrapper(self, posts_data, page_id):
         actions = []
         for post_data in posts_data:
@@ -51,6 +52,7 @@ class wrapper():
                 self.logger.error("Bulk Put Document to ES : {1}".format(json.dumps(post_data)))
         helpers.bulk(self.es, actions, request_timeout=120)
 
+    #put comments into elasticsearch
     def fb_comments_wrapper(self, comments_data, post_id):
         actions = []
         for comment_data in comments_data:
@@ -60,6 +62,7 @@ class wrapper():
                 action['_index'] = self.index
                 action['_type'] = 'comments'
                 action['parent'] = post_id
+                action['page_id'] = post_id.split("_")[0]
                 action['created_time'] = comment_data['created_time']
                 action['uid'] = comment_data['id']
                 if comment_data.has_key('message'):
@@ -68,14 +71,16 @@ class wrapper():
                 action["comment_count"] = comment_data['comment_count']
                 action["from_name"] = comment_data["from"]["name"]
                 action["from_id"] = comment_data["from"]["id"]
+                action['attachment'] = {}
                 if comment_data.has_key("attachment"):
-                    if comment_data["attachment"].has_key("description"):
-                        action["attachment"]["description"] = comment_data["attachment"]["description"]
-                    if comment_data["attachment"].has_key("title"):
-                        action["attachment"]["title"] = comment_data["attachment"]["title"]
-                    if comment_data["attachment"].has_key("media"):
-                        action["attachment"]["image_url"] = comment_data["attachment"]["media"]["image"]["src"]
-                    action["attachment"]["target_url"] = comment_data["attachment"]["url"]
+                    attachment = comment_data['attachment']
+                    if attachment.has_key("description"):
+                        action["attachment"]["description"] = attachment["description"]
+                    if attachment.has_key("title"):
+                        action["attachment"]["title"] = attachment["title"]
+                    action["attachment"]["target_url"] = attachment["url"]
+                    if attachment.has_key('media'):
+                        action["attachment"]["media"] = attachment["media"]
                 actions.append(action)
             except Exception, error:
                 traceback.print_exc()
