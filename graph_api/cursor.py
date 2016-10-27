@@ -1,8 +1,8 @@
 from elasticsearch import Elasticsearch
-import datetime
-import time
 import logging
 import simplejson as json
+from dateutil.parser import parse
+import datetime
 
 class cursor():
 
@@ -12,6 +12,32 @@ class cursor():
         self.es = Elasticsearch([es_server])
         self.page_id = page_id
         self.index = es_index
+    #get newest events in es
+    def get_newest_event(self):
+        posts_query_json = {"_source": ["start_time"],
+                            "query":
+                                {"bool":
+                                     {"filter":
+                                          [{"term": {"_type": "events"}},
+                                           {"term": {"parent": self.page_id}}
+                                           ]
+                                      }
+                                 },
+                            "sort": [{"start_time": {"order": "desc"}}],
+                            "size": 1, "from": 0
+                            }
+        response = self.es.search(index=self.index, doc_type="events", body=posts_query_json)
+
+        #No Posts in ES
+        if len(response['hits']['hits']) == 0:
+            one_year_ago = datetime.datetime.now() - datetime.timedelta(days=1 * 365)
+            return one_year_ago
+
+        # Found the last newest post get newer
+        for doc in response['hits']['hits']:
+            last_new_date = doc['_source']['start_time']
+            self.logger.debug("name:{0} fetch oldeset post {1}".format(self.page_id, last_new_date))
+            return parse(last_new_date)
 
     # Scan  the newest posts in our ES relative to this page
     def get_newest_posts(self):
@@ -28,16 +54,18 @@ class cursor():
                             "size": 1, "from": 0
                             }
         response = self.es.search(index=self.index, doc_type="posts", body=posts_query_json)
+
         #No Posts in ES
         if len(response['hits']['hits']) == 0:
-            oneYearAgo = datetime.datetime.now() - datetime.timedelta(days=1 * 365)
-            return time.mktime(oneYearAgo.timetuple())
-            # Found the last newest post get newer
+            one_year_ago = datetime.datetime.now() - datetime.timedelta(days=1 * 365)
+            return one_year_ago
+
+        # Found the last newest post get newer
         for doc in response['hits']['hits']:
             print("%s) %s" % (doc['_id'], doc['_source']['created_time']))
-            lastNewDate = doc['_source']['created_time']
-            self.logger.debug("name:{0} fetch oldeset post {1}".format(self.page_id, lastNewDate))
-            return time.mktime(datetime.datetime.strptime(lastNewDate, "%Y-%m-%dT%H:%M:%S+0000").timetuple())
+            last_new_date = doc['_source']['created_time']
+            self.logger.debug("name:{0} fetch oldeset post {1}".format(self.page_id, last_new_date))
+            return parse(last_new_date)
 
     # Scan all the posts and newest comments to every post, return posts--timestamp
     def get_newest_comments(self, query_index):
@@ -81,8 +109,7 @@ class cursor():
             else:
                 for comment_doc in response['hits']['hits']:
                     lastNewDate = comment_doc['_source']['created_time']
-                    timestamp = time.mktime(datetime.datetime.strptime(lastNewDate, "%Y-%m-%dT%H:%M:%S+0000").timetuple())
-                    result.append({"post_id" : comment_doc['_source']['parent'], "end_time" : timestamp})
+                    result.append({"post_id" : comment_doc['_source']['parent'], "end_time" : parse(lastNewDate)})
             i = i + 1
 
         return result

@@ -1,93 +1,174 @@
 {
    "mappings":{
-
       "page":{
-        "properties":{
-          "fan_count" : {"type" : "long"},
-          "about" : { "type" : "string" },
-          "category" : { "type" : "string" },
-          "picture" : { "type" : "string" }
-        }
-      },
-
-      "posts": {
-        "properties": {
-          "parent": {"type" : "page"},
-          "shares": { "type" : "long" },
-          "full_picture":  { "type": "string"  },
-          "message":  { "type": "string"  },
-          "sentiment" :{ "type" :  "string" },
-          "created_time": {
-              "type":   "date",
-              "format": "strict_date_optional_time||epoch_millis"
-           },
-          "updated_time": {
-              "type":   "date",
-              "format": "strict_date_optional_time||epoch_millis"
-           },
-          "status_type": { "type": "string"  },
-          "type": { "type": "string"  },
-          "uid": { "type": "long" }
-        }
-      },
-
-     "comments" :{
-       "properties": {
-         "page_id" : { "type" : "string" },
-         "parent" : { "type" : "posts_id" },
-         "uid" : { "type" : "string" },
-         "message" : { "type" : "string" },
-         "created_time" : {
-              "type":   "date",
-              "format": "strict_date_optional_time||epoch_millis"
-         },
-         "comment_count" : { "type" : "long" },
-         "like_count" : { "type" : "long" },
-         "from_name" : { "type" : "string" },
-         "from_id" : { "type" : "string" },
-         "attachment" : {
-           "properties" : {
-             "description" : { "type" : "string" },
-             "image_url" : { "type" : "string" },
-             "target_url" : { "type" : "string" },
-             "title" : { "type" : "string" },
-             "type" : { "type" : "string" }
-           }
-         }
-       }
-     },
-
-     "events" :{
-        "properties": {
-         "page_id" : { "type" : "string" },
-         "parent" : { "type" : "string" },
-         "uid" : { "type" : "string" },
-         "description" : { "type" : "string" },
-         "start_time" : {
-              "type":   "date",
-              "format": "strict_date_optional_time||epoch_millis"
-         },
-          "end_time" : {
-              "type":   "date",
-              "format": "strict_date_optional_time||epoch_millis"
-         },
-         "attend_count" : { "type" : "long" },
-         "interested_count" : { "type" : "long" },
-          "place" : {
-            "properties":{
-              "name" :{ "type": "string"},
-              "city" : {"type" : "string"},
-              "country" : { "type" : "string" },
-              "state" : { "type" : "string" },
-              "street" : { "type" : "string"},
-              "location" : { "type" : "geo_point"}
+         "properties":{
+            "fan_count":{
+               "type":"long"
+            },
+            "about":{
+               "type":"string"
+            },
+            "category":{
+               "type":"string"
+            },
+            "picture":{
+               "type":"string"
             }
-          },
-
-          "cover" : { "type" : "string" }
-       }
-     }
-
+         }
+      },
+      "posts":{
+         "properties":{
+            "parent":{
+               "type":"page"
+            },
+            "shares":{
+               "type":"long"
+            },
+            "full_picture":{
+               "type":"string"
+            },
+            "message":{
+               "type":"string"
+            },
+            "sentiment":{
+               "type":"string"
+            },
+            "created_time":{
+               "type":"date",
+               "format":"strict_date_optional_time||epoch_millis"
+            },
+            "updated_time":{
+               "type":"date",
+               "format":"strict_date_optional_time||epoch_millis"
+            },
+            "status_type":{
+               "type":"string"
+            },
+            "type":{
+               "type":"string"
+            },
+            "uid":{
+               "type":"long"
+            }
+         }
+      },
+      "comments":{
+         "properties":{
+            "page_id":{
+               "type":"string"
+            },
+            "parent":{
+               "type":"string"
+            },
+            "uid":{
+               "type":"string"
+            },
+            "message":{
+               "type":"string"
+            },
+            "created_time":{
+               "type":"date",
+               "format":"strict_date_optional_time||epoch_millis"
+            },
+            "comment_count":{
+               "type":"long"
+            },
+            "like_count":{
+               "type":"long"
+            },
+            "from_name":{
+               "type":"string"
+            },
+            "from_id":{
+               "type":"string"
+            },
+            "attachment":{
+               "properties":{
+                  "description":{
+                     "type":"string"
+                  },
+                  "image_url":{
+                     "type":"string"
+                  },
+                  "target_url":{
+                     "type":"string"
+                  },
+                  "title":{
+                     "type":"string"
+                  },
+                  "type":{
+                     "type":"string"
+                  }
+               }
+            }
+         }
+      },
+      "events":{
+         "properties":{
+            "page_id":{
+               "type":"string"
+            },
+            "parent":{
+               "type":"string"
+            },
+            "uid":{
+               "type":"string"
+            },
+            "name":{
+               "type":"string"
+            },
+            "category":{
+               "type":"string"
+            },
+            "description":{
+               "type":"string"
+            },
+            "start_time":{
+               "type":"date",
+               "format":"strict_date_optional_time||epoch_millis"
+            },
+            "end_time":{
+               "type":"date",
+               "format":"strict_date_optional_time||epoch_millis"
+            },
+            "attend_count":{
+               "type":"long"
+            },
+            "interested_count":{
+               "type":"long"
+            },
+            "maybe_count":{
+               "type":"long"
+            },
+            "noreply_count":{
+               "type":"long"
+            },
+            "place":{
+               "properties":{
+                  "name":{
+                     "type":"string"
+                  },
+                  "city":{
+                     "type":"string"
+                  },
+                  "country":{
+                     "type":"string"
+                  },
+                  "state":{
+                     "type":"string"
+                  },
+                  "street":{
+                     "type":"string"
+                  },
+                  "location":{
+                     "type":"geo_point"
+                  }
+               }
+            },
+            "cover":{
+               "type":"string"
+            }
+         }
+      }
    }
 }
-
