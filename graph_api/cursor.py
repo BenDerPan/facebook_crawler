@@ -12,6 +12,7 @@ class cursor():
         self.es = Elasticsearch([es_server])
         self.page_id = page_id
         self.index = es_index
+
     #get newest events in es
     def get_newest_event(self):
         posts_query_json = {"_source": ["start_time"],
@@ -36,7 +37,7 @@ class cursor():
         # Found the last newest post get newer
         for doc in response['hits']['hits']:
             last_new_date = doc['_source']['start_time']
-            self.logger.debug("name:{0} fetch oldeset post {1}".format(self.page_id, last_new_date))
+            self.logger.debug("name:{0} fetch oldeset event {1}".format(self.page_id, last_new_date))
             return parse(last_new_date)
 
     # Scan  the newest posts in our ES relative to this page

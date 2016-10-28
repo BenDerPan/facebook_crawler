@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 
 from graph_api import settings
-from graph_api.spider_posts import spider
+from graph_api.spider import spider
 
 app = Flask(__name__)
 

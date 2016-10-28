@@ -12,7 +12,7 @@ from dateutil.parser import parse
 #2016-10-17 GongMeng
 
 
-class spider_posts():
+class spider():
     FORMAT = '[%(asctime)s -- %(levelname)s -- %(threadName)s -- %(funcName)s]:%(message)s'
     logging.basicConfig(format=FORMAT)
     logger = logging.getLogger("fb_spider")
@@ -39,6 +39,60 @@ class spider_posts():
                 "name:{0}\n\t message: {1}".format(self.facebook_name, error))
             return False
 
+    #get fb feed
+    def get_fb_feed(self, end_time):
+        try:
+            result = self.graph.get_object(id=self.facebook_name,
+                                           fields="feed.limit(25){shares,from,message,attachments{media},type,created_time,updated_time,status_type,full_picture}")
+            if result.has_key("error"):
+                raise "Error in Return JSON"
+
+            #get more posts unitl target endTime
+            feed_data = result['feed']['data']
+            page_id = result['id']
+            next_page = result['feed']['paging']['next']
+            retry_num = 0
+            #get more posts
+            while(True):
+                #Have failed too many times?
+                if retry_num == 3:
+                    return False
+
+                #Try to put all the posts data into elasticsearch
+                self.wrapper.fb_feed_wrapper(feed_data, page_id)
+
+                #no more posts?
+                if len(feed_data) < 25:
+                    return True
+
+                #Have pull every new posts??
+                post_date = time.mktime(parse(feed_data[24]['created_time']).timetuple())
+                self.logger.debug("name:{0} fetch oldeset feed {1}".format(self.facebook_name, post_date))
+                if not end_time == 0:
+                    end_time = time.mktime(end_time.timetuple())
+
+                if post_date <= end_time:
+                    return True
+
+                #Paginator to next 25 posts
+                self.logger.debug(next_page)
+                result = json.loads(requests.request("GET", next_page).content)
+
+                #Error when try to paginator??
+                if result.has_key("error"):
+                    self.refresh_token()
+                    retry_num = retry_num + 1
+                    continue
+
+                #Fetch new data
+                feed_data = result['data']
+                next_page = result['paging']['next']
+            return True
+        except Exception, error:
+            traceback.print_exc()
+            self.logger.error(
+                "name:{0}\t message: {1}".format(self.facebook_name,  error))
+            return False
     #Get Posts
     def get_fb_post(self, end_time):
         try:
@@ -68,8 +122,10 @@ class spider_posts():
                 #Have pull every new posts??
                 post_date = time.mktime(parse(posts_data[24]['created_time']).timetuple())
                 self.logger.debug("name:{0} fetch oldeset post {1}".format(self.facebook_name, post_date))
+                if not end_time == 0:
+                    end_time = time.mktime(end_time.timetuple())
 
-                if post_date <= time.mktime(end_time.timetuple()):
+                if post_date <= end_time:
                     return True
 
                 #Paginator to next 25 posts
@@ -93,9 +149,9 @@ class spider_posts():
             return False
 
     #get comments relate to one post
-    def get_fb_comments_of_post(self, post_id, end_time):
+    def get_fb_comments_of_post(self, object_id, end_time):
         try:
-            result = self.graph.get_object(id = post_id,
+            result = self.graph.get_object(id = object_id,
                                            fields = "comments.limit(25){like_count,message,from,created_time,attachment,comment_count}")
             #check error
             if result.has_key("error"):
@@ -115,15 +171,18 @@ class spider_posts():
                     return False
 
                 # Try to put all the posts data into elasticsearch
-                self.wrapper.fb_comments_wrapper(comments_data, post_id)
+                self.wrapper.fb_comments_wrapper(comments_data, object_id)
                 # no more posts?
                 if len(comments_data) < 25:
                     return True
 
                 # Have pull every new posts??
                 comment_date = time.mktime(parse(comments_data[14]['created_time']).timetuple())
-                self.logger.debug("name:{0} fetch oldeset post {1}".format(self.facebook_name, comment_date))
-                if comment_date <= time.mktime(end_time.timetuple()):
+                self.logger.debug("name:{0} fetch oldeset comment {1}".format(self.facebook_name, comment_date))
+                if not end_time == 0:
+                    end_time = time.mktime(end_time.timetuple())
+
+                if comment_date <= end_time:
                     return True
 
                 # Paginator to next 15 comments
@@ -161,7 +220,54 @@ class spider_posts():
             self.logger.warning(
                 "name:{0}\n\t message: {1}".format(self.facebook_name, json.dumps(result, sort_keys=False)))
             return False
+            # Get Events
 
+    def get_fb_events(self, end_time):
+        try:
+            result = self.graph.get_object(id=self.facebook_name,
+                                           fields="events.limit(25){attending_count,description,start_time,end_time,category,cover,place,interested_count,name,maybe_count,noreply_count}")
+            if result.has_key("error"):
+                raise "Error in Return JSON"
+            # get more events unitl endTime
+            events_data = result['events']['data']
+            page_id = result['id']
+            next_page = result['events']['paging']['next']
+            retry_num = 0
+            # get more events
+            while (True):
+                # Have failed too many times?
+                if retry_num == 3:
+                    return False
+                # Try to put all the posts data into elasticsearch
+                self.wrapper.fb_events_wrapper(events_data, page_id)
+                # no more posts?
+                if len(events_data) < 25:
+                    return True
+                print events_data[24]['start_time']
+                print end_time
+                # Have pull every new posts??
+                event_date = time.mktime(parse(events_data[24]['start_time']).timetuple())
+                self.logger.debug("name:{0} fetch oldeset event {1}".format(self.facebook_name, event_date))
+                if event_date <= time.mktime(end_time.timetuple()):
+                    return True
+                # Paginator to next 25 events
+                self.logger.debug(next_page)
+                result = json.loads(requests.request("GET", next_page).content)
+                # Error when try to paginator??
+                if result.has_key("error"):
+                    self.logger.error("Fetch Evetns error : {0}".format(json.dumps(result)))
+                    self.refresh_token()
+                    retry_num = retry_num + 1
+                    continue
+                # Fetch new data
+                events_data = result['data']
+                next_page = result['paging']['next']
+            return True
+        except Exception, error:
+            traceback.print_exc()
+            self.logger.error(
+                "name:{0}\t message: {1}".format(self.facebook_name, error))
+            return False
     #Likes of one post, which people like this post -->pagination
     def get_fb_likes_of_post(self, post_id):
         try:
