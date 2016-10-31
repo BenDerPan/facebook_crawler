@@ -13,7 +13,12 @@
                "index": "not_analyzed"
             },
             "picture":{
-               "type":"string"
+               "type":"string",
+               "index": "not_analyzed"
+            },
+            "uid":{
+               "type":"string",
+               "index": "not_analyzed"
             }
          }
       },
@@ -62,7 +67,8 @@
                "index": "not_analyzed"
             },
             "uid":{
-               "type":"long"
+               "type":"string",
+               "index": "not_analyzed"
             }
          }
       },
@@ -107,13 +113,18 @@
                "index": "not_analyzed"
             },
             "uid":{
-               "type":"long"
+               "type":"string",
+                "index": "not_analyzed"
             }
          }
       },
       "comments":{
          "properties":{
             "page_id":{
+               "type":"string",
+               "index": "not_analyzed"
+            },
+            "target":{
                "type":"string",
                "index": "not_analyzed"
             },
@@ -142,6 +153,10 @@
                "type":"string"
             },
             "from_id":{
+               "type":"string",
+               "index": "not_analyzed"
+            },
+            "sentiment":{
                "type":"string",
                "index": "not_analyzed"
             },
@@ -194,7 +209,7 @@
             "description":{
                "type":"string"
             },
-            "start_time":{
+            "created_time":{
                "type":"date",
                "format":"strict_date_optional_time||epoch_millis"
             },
@@ -217,7 +232,8 @@
             "place":{
                "properties":{
                   "name":{
-                     "type":"string"
+                     "type":"string",
+                     "index": "not_analyzed"
                   },
                   "city":{
                      "type":"string",
@@ -232,7 +248,8 @@
                      "index": "not_analyzed"
                   },
                   "street":{
-                     "type":"string"
+                     "type":"string",
+                     "index": "not_analyzed"
                   },
                   "location":{
                      "type":"geo_point"

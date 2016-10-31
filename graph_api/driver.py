@@ -26,24 +26,35 @@ class driver():
         end_time = self.cursor.get_newest_posts()
         self.s.get_fb_post(end_time)
 
+    # Feeds for fan page and Feeds for Events
+    def spider_feeds_driver_to_page(self):
+        end_time = self.cursor.get_newest_feeds(self.page_id)
+        spider_res = self.s.get_fb_feed(end_time, self.page_id)
+        print spider_res
+
     def spider_comments_to_post_driver(self):
         query_index = 0
         while(True):
-            result = self.cursor.get_newest_comments(query_index)
+            result = self.cursor.get_newest_comments_to_post(query_index)
             for iteam in result:
-                spider_res = self.s.get_fb_comments_of_post(iteam['post_id'], iteam['end_time'])
+                spider_res = self.s.get_fb_comments(page_id = self.page_id, object_id = iteam['post_id'], end_time = iteam['end_time'], target_type = "post")
                 print spider_res
             if len(result) < 30:
                 return True
             else:
                 query_index = query_index + 30
+                if query_index > 300:
+                    return True
 
     def spider_events_driver(self):
         end_time = self.cursor.get_newest_event()
-        print end_time
-        self.s.get_fb_events(end_time)
+        res = self.s.get_fb_events(end_time)
+        print res
 
 if __name__ == '__main__':
-    driver = driver("southpark")
+    driver = driver("lululemon")
+    driver.spider_feeds_driver_to_page()
+    driver.spider_posts_driver()
+    driver.spider_comments_to_post_driver()
     driver.spider_events_driver()
 

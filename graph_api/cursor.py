@@ -3,6 +3,7 @@ import logging
 import simplejson as json
 from dateutil.parser import parse
 import datetime
+import pytz
 
 class cursor():
 
@@ -13,9 +14,39 @@ class cursor():
         self.page_id = page_id
         self.index = es_index
 
+    #get newest feeds in es
+    def get_newest_feeds(self, parent_id):
+        query_json = {"_source": ["uid", "created_time"],
+                      "query":
+                          {"bool":
+                               {"filter":
+                                    [
+                                     {"term": {"parent": parent_id}}
+                                     ]
+                                }
+                           },
+                      "sort": [{"created_time": {"order": "desc"}}],
+                      "size": 1, "from": 0
+                      }
+
+        # result  postsid : timestamp
+        result = []
+        # multi search
+
+        res = self.es.search(index=self.index, doc_type="feeds", body=query_json)
+        # No Feeds in ES
+        if len(res['hits']['hits']) == 0:
+            one_month_ago = datetime.datetime.now() - datetime.timedelta(days=1 * 365)
+            return pytz.utc.utcoffset(one_month_ago)
+
+        # return the newest feeds
+        for doc in res['hits']['hits']:
+            print("feeds %s %s" % (doc['_source']['uid'], doc['_source']['created_time']))
+            return parse(doc['_source']['created_time'])
+
     #get newest events in es
     def get_newest_event(self):
-        posts_query_json = {"_source": ["start_time"],
+        query_json = {"_source": ["uid", "created_time"],
                             "query":
                                 {"bool":
                                      {"filter":
@@ -24,19 +55,20 @@ class cursor():
                                            ]
                                       }
                                  },
-                            "sort": [{"start_time": {"order": "desc"}}],
+                            "sort": [{"created_time": {"order": "desc"}}],
                             "size": 1, "from": 0
                             }
-        response = self.es.search(index=self.index, doc_type="events", body=posts_query_json)
+        response = self.es.search(index=self.index, body=query_json)
 
         #No Posts in ES
         if len(response['hits']['hits']) == 0:
             one_year_ago = datetime.datetime.now() - datetime.timedelta(days=1 * 365)
-            return one_year_ago
+            return pytz.utc.utcoffset(one_year_ago)
 
         # Found the last newest post get newer
         for doc in response['hits']['hits']:
-            last_new_date = doc['_source']['start_time']
+            print("events : %s %s" % (doc['_source']['uid'], doc['_source']['created_time']))
+            last_new_date = doc['_source']['created_time']
             self.logger.debug("name:{0} fetch oldeset event {1}".format(self.page_id, last_new_date))
             return parse(last_new_date)
 
@@ -58,18 +90,18 @@ class cursor():
 
         #No Posts in ES
         if len(response['hits']['hits']) == 0:
-            one_year_ago = datetime.datetime.now() - datetime.timedelta(days=1 * 365)
-            return one_year_ago
+            one_month_ago = datetime.datetime.now() - datetime.timedelta(days=1 * 365)
+            return pytz.utc.utcoffset(one_month_ago)
 
         # Found the last newest post get newer
         for doc in response['hits']['hits']:
-            print("%s) %s" % (doc['_id'], doc['_source']['created_time']))
+            print("posts : %s %s" % (doc['_id'], doc['_source']['created_time']))
             last_new_date = doc['_source']['created_time']
             self.logger.debug("name:{0} fetch oldeset post {1}".format(self.page_id, last_new_date))
             return parse(last_new_date)
 
     # Scan all the posts and newest comments to every post, return posts--timestamp
-    def get_newest_comments(self, query_index):
+    def get_newest_comments_to_post(self, query_index):
         query_json= { "_source" : ["uid", "created_time"],
                       "query" :
                           { "bool":
@@ -92,7 +124,7 @@ class cursor():
         res = self.es.search(index=self.index, doc_type="posts", body=query_json)
 
         for doc in res['hits']['hits']:
-            print("%s) %s" % (doc['_source']['uid'], doc['_source']['created_time']))
+            print("comments %s %s" % (doc['_source']['uid'], doc['_source']['created_time']))
             search_arr.append({'index': self.index, 'type': 'comments'})
             search_arr.append({"query": {"term" : {"parent" : doc['_source']['uid']}},
                                'from': 0, 'size': 1, "_source":["created_time", "parent"],
