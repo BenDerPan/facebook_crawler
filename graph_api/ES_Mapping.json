@@ -37,7 +37,8 @@
                "index": "not_analyzed"
             },
             "message":{
-               "type":"string"
+               "type":"string",
+               "analyzer" : "my"
             },
             "sentiment":{
                "type":"string",
@@ -90,7 +91,8 @@
                "index": "not_analyzed"
             },
             "message":{
-               "type":"string"
+               "type":"string",
+               "analyzer" : "my"
             },
             "sentiment":{
                "type":"string",
@@ -137,7 +139,8 @@
                "index": "not_analyzed"
             },
             "message":{
-               "type":"string"
+               "type":"string",
+               "analyzer" : "my"
             },
             "created_time":{
                "type":"date",
@@ -201,13 +204,15 @@
             },
             "name":{
                "type":"string"
+
             },
             "category":{
                "type":"string",
                "index": "not_analyzed"
             },
-            "description":{
-               "type":"string"
+            "message":{
+               "type":"string",
+               "analyzer" : "my"
             },
             "created_time":{
                "type":"date",
@@ -261,6 +266,93 @@
                "index": "not_analyzed"
             }
          }
+      },
+
+      "photos":{
+         "properties":{
+            "uid" :{
+               "type":"string",
+               "index": "not_analyzed"
+            },
+            "page_id" :{
+               "type":"string",
+               "index": "not_analyzed"
+            },
+            "parent" : {
+               "type" : "string",
+               "index" : "not_analyzed"
+            },
+            "type" : {
+               "type" : "string",
+               "index" : "not_analyzed"
+            },
+            "target": {
+               "type" : "string",
+               "index" : "not_analyzed"
+            },
+            "from_id": {
+               "type" : "string",
+               "index" : "not_analyzed"
+            },
+            "from_name": {
+               "type" : "string"
+            },
+            "album_id": {
+               "type" : "string",
+               "index" : "not_analyzed"
+            },
+            "album_name": {
+               "type" : "string",
+               "index" : "not_analyzed"
+            },
+            "name": {
+               "type" : "string"
+            },
+            "name_tags" : {
+               "type" : "nested",
+               "index" : "not_analyzed"
+            },
+             "created_time":{
+               "type":"date",
+               "format":"strict_date_optional_time||epoch_millis"
+            },
+            "end_time":{
+               "type":"date",
+               "format":"strict_date_optional_time||epoch_millis"
+            },
+            "image_url" :{
+               "type":"string",
+               "index": "not_analyzed"
+            },
+            "place":{
+               "properties":{
+                  "name":{
+                     "type":"string",
+                     "index": "not_analyzed"
+                  },
+                  "city":{
+                     "type":"string",
+                     "index": "not_analyzed"
+                  },
+                  "country":{
+                     "type":"string",
+                     "index": "not_analyzed"
+                  },
+                  "state":{
+                     "type":"string",
+                     "index": "not_analyzed"
+                  },
+                  "street":{
+                     "type":"string",
+                     "index": "not_analyzed"
+                  },
+                  "location":{
+                     "type":"geo_point"
+                  }
+               }
+            }
+         }
       }
+
    }
 }

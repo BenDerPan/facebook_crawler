@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 
 from graph_api import settings
-from graph_api.spider import spider
+from graph_api.spider import Spider
 
 app = Flask(__name__)
 
@@ -14,8 +14,8 @@ def page_name():
     assert request.method == 'POST'
     name = request.form['name']
     if not name:
-        facebook_spider = spider(settings.FACEBOOK_APP_ID, settings.FACEBOOK_APP_SECRET, name)
-        baseinfo = facebook_spider.get_base_info()
+        facebook_spider = Spider(settings.FACEBOOK_APP_ID, settings.FACEBOOK_APP_SECRET, name)
+        baseinfo = facebook_spider.get_base_info
 
 
 
