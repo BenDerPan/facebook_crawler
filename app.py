@@ -1,22 +1,20 @@
 from flask import Flask, render_template, request
+import simplejson as json
 
-from graph_api import settings
-from graph_api.spider import Spider
 
 app = Flask(__name__)
 
-@app.route("/", methods=['GET'])
-def main_page():
-    return render_template('index.html')
 
-@app.route('/page_name', methods=['POST'])
-def page_name():
-    assert request.method == 'POST'
-    name = request.form['name']
-    if not name:
-        facebook_spider = Spider(settings.FACEBOOK_APP_ID, settings.FACEBOOK_APP_SECRET, name)
-        baseinfo = facebook_spider.get_base_info
+@app.route('/sentiment/<pagename>')
+def show_facebook_sentiment(pagename):
+    print 'sentiment : ' + pagename
+    return render_template('sentiment.html', pagename=pagename)
 
+@app.route('/buzzgraph/<pagename>')
+def show_facebook_buzzgraph(pagename):
+    print 'buzzgraph : ' + pagename
+    with open('static/buzzgraph.json') as data_file:
+        data = json.load(data_file)
 
-
+    return render_template('buzzgraph.html', data=json.dumps(data))
 

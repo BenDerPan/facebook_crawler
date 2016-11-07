@@ -1,0 +1,171 @@
+{
+  "nodes": [
+    {
+      "color": "#ff0000",
+      "label": "lululemon",
+      "attributes": {},
+      "y": 0,
+      "x": 0,
+      "id": "lululemon",
+      "size": 100
+    },
+    {
+      "color": "#c71969",
+      "label": "yogo",
+      "attributes": {},
+      "y": 200,
+      "x": 0,
+      "id": "yoga",
+      "size": 75
+    },
+    {
+      "color": "#c71969",
+      "label": "sports",
+      "attributes": {},
+      "y": 200,
+      "x": -75.53079,
+      "id": "sports",
+      "size": 65
+    },
+      {
+      "color": "#c71969",
+      "label": "fashion",
+      "attributes": {},
+      "y": 150,
+      "x": -75.53079,
+      "id": "fashion",
+      "size": 50
+    },
+    {
+      "color": "#c71969",
+      "label": "pants",
+      "attributes": {},
+      "y": 170,
+      "x": 70,
+      "id": "pants",
+      "size": 40
+    },
+    {
+      "color": "#000000",
+      "label": "shame",
+      "attributes": {},
+      "y": 100,
+      "x": 100,
+      "id": "shame",
+      "size": 30
+    },
+    {
+      "color": "#000000",
+      "label": "labor",
+      "attributes": {},
+      "y": 200,
+      "x": 100,
+      "id": "labor",
+      "size": 30
+    },
+    {
+      "color": "#c71969",
+      "label": "cost",
+      "attributes": {},
+      "y": 50,
+      "x": -50,
+      "id": "cost",
+      "size": 30
+    },
+      {
+      "color": "#c00000",
+      "label": "running",
+      "attributes": {},
+      "y": 350,
+      "x": -75.53079,
+      "id": "running",
+      "size": 30
+    },
+      {
+      "color": "#c00000",
+      "label": "needs",
+      "attributes": {},
+      "y": 350,
+      "x": 100,
+      "id": "needs",
+      "size": 30
+    },
+    {
+      "color": "#c000ff",
+      "label": "athleta",
+      "attributes": {},
+      "y": 400,
+      "x": 0,
+      "id": "athleta",
+      "size": 90
+    }
+  ],
+  "edges": [
+    {
+      "sourceID": "lululemon",
+      "attributes": {},
+      "targetID": "yoga",
+      "size": 50
+    },
+    {
+      "sourceID": "lululemon",
+      "attributes": {},
+      "targetID": "sports",
+      "size": 8
+    },
+    {
+      "sourceID": "lululemon",
+      "attributes": {},
+      "targetID": "fashion",
+      "size": 8
+    },
+    {
+      "sourceID": "lululemon",
+      "attributes": {},
+      "targetID": "pants",
+      "size": 8
+    },
+    {
+      "sourceID": "lululemon",
+      "attributes": {},
+      "targetID": "labor",
+      "size": 8
+    },
+    {
+      "sourceID": "lululemon",
+      "attributes": {},
+      "targetID": "shame",
+      "size": 8
+    },
+    {
+      "sourceID": "lululemon",
+      "attributes": {},
+      "targetID": "cost",
+      "size": 8
+    },
+    {
+      "sourceID": "athleta",
+      "attributes": {},
+      "targetID": "sports",
+      "size": 8
+    },
+    {
+      "sourceID": "athleta",
+      "attributes": {},
+      "targetID": "running",
+      "size": 8
+    },
+    {
+      "sourceID": "athleta",
+      "attributes": {},
+      "targetID": "needs",
+      "size": 8
+    },
+    {
+      "sourceID": "athleta",
+      "attributes": {},
+      "targetID": "yoga",
+      "size": 8
+    }
+  ]
+}

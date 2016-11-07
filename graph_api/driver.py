@@ -1,5 +1,7 @@
 import logging
 import settings
+import urllib3
+import datetime
 from spider import Spider
 from cursor import cursor
 
@@ -63,9 +65,11 @@ class driver():
         print res
 
 if __name__ == '__main__':
+    urllib3.disable_warnings()
     driver = driver("lululemon")
     driver.spider_feeds_driver_to_page()
     driver.spider_posts_driver()
     driver.spider_comments_to_post_driver()
     driver.spider_events_driver()
     driver.spider_photos_driver()
+    print 'Facebook Spider Worker End by {0}'.format(datetime.datetime.now())

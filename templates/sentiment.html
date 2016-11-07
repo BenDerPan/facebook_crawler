@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!-- 引入 echarts.js -->
+    <script src="/static/echarts.min.js"></script>
+    <script src="/static/infographic.js"></script>
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 450px;height:400px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'), 'infographic.js');
+
+        // 指定图表的配置项和数据
+        var option = {
+            tooltip : {
+             trigger: 'item',
+             formatter: "{a} <br/>{b} : {c} ({d}%)"
+             },
+            legend: {
+             x : 'center',
+             y : 'bottom',
+              data:['Pos','Neg','Neu']
+             },
+    calculable : true,
+    series : [
+        {
+            name:'sentimente',
+            type:'pie',
+            radius : [30, 110],
+            roseType : 'area',
+            data:[
+                {value:616, name:'Pos'},
+                {value:212, name:'Neg'},
+                {value:690, name:'Neu'}
+            ]
+        }
+    ]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+</body>
+</html>
